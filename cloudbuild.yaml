@@ -6,6 +6,6 @@ steps:
   - deploy
   - sherlock
   - --region=us-west1
-  - --source=.
+  - --source=./sherlock
   - --trigger-http
   - --runtime=python311
