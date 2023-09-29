@@ -5,11 +5,11 @@ steps:
     - 'https://github.com/sherlockify/sherlock'
 
 - name: 'gcr.io/cloud-builders/docker'
-  entrypoint: /bin/bash
+  entrypoint: 'bash'
   args:
-    - bash
     - -c
-    - mv ./run-sherlock/main.py ./sherlock/
+    - |
+      mv ./run-sherlock/main.py ./sherlock/
 
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   args:
