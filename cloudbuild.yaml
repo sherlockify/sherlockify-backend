@@ -1,23 +1,28 @@
 steps:
 - name: 'gcr.io/cloud-builders/git'
+  id: 'clone-sherlock'
   args:
     - clone
     - 'https://github.com/sherlockify/sherlock'
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
+  id: 'move-sherlock-files'
   args:
     - -c
     - |
-      mv ./run-sherlock/main.py ./sherlock/
+      mv ./run-sherlock/main.py ./sherlock/ && cat ./run-sherlock/requirements.txt >> ./sherlock/requirements.txt
 
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  waitFor:
+    - 'clone-sherlock'
+    - 'move-sherlock-files'
   args:
-  - gcloud
-  - functions
-  - deploy
-  - sherlock
-  - --region=us-west1
-  - --source=./sherlock
-  - --trigger-http
-  - --runtime=python311
+    - gcloud
+    - functions
+    - deploy
+    - sherlock
+    - --region=us-west1
+    - --source=./sherlock
+    - --trigger-http
+    - --runtime=python311
