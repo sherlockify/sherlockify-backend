@@ -1,4 +1,10 @@
 steps:
+- name: 'gcr.io/cloud-builders/git'
+  args:
+    - clone
+    - 'https://github.com/sherlockify/sherlock'
+  dir: './run-sherlock'
+
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   args:
   - gcloud
