@@ -3,7 +3,13 @@ steps:
   args:
     - clone
     - 'https://github.com/sherlockify/sherlock'
-  dir: './run-sherlock'
+
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: /bin/bash
+  args:
+    - bash
+    - -c
+    - mv ./run-sherlock/main.py ./sherlock/
 
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   args:
@@ -12,6 +18,6 @@ steps:
   - deploy
   - sherlock
   - --region=us-west1
-  - --source=./run-sherlock
+  - --source=./sherlock
   - --trigger-http
   - --runtime=python311
