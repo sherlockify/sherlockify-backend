@@ -9,12 +9,15 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     id: 'move-sherlock-require'
+    waitFor: ['clone-sherlock']
     args:
       - -c
       - |
         cat ./run-sherlock/sherlock/requirements.txt >> ./run-sherlock/requirements.txt
 
   - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-docker'
+    waitFor: ['move-sherlock-require']
     args:
       - build
       - -t
@@ -22,11 +25,14 @@ steps:
       - ./run-sherlock
 
   - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-docker'
+    waitFor: ['build-docker']
     args:
       - push
       - 'us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA'
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    waitFor: ['push-docker']
     entrypoint: gcloud
     args:
       - 'run'
