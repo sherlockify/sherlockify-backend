@@ -1,34 +1,41 @@
 steps:
-- name: 'gcr.io/cloud-builders/git'
-  id: 'clone-sherlock'
-  args:
-    - clone
-    - 'https://github.com/sherlockify/sherlock'
-  dir: './run-sherlock'
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'clone-sherlock'
+    args:
+      - clone
+      - 'https://github.com/sherlockify/sherlock'
+    dir: './run-sherlock'
 
-- name: 'gcr.io/cloud-builders/docker'
-  entrypoint: 'bash'
-  id: 'move-sherlock-require'
-  args:
-    - -c
-    - |
-      cat ./run-sherlock/sherlock/requirements.txt >> ./run-sherlock/requirements.txt
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    id: 'move-sherlock-require'
+    args:
+      - -c
+      - |
+        cat ./run-sherlock/sherlock/requirements.txt >> ./run-sherlock/requirements.txt
 
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - 'us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA'
+      - ./run-sherlock
 
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  waitFor:
-    - 'clone-sherlock'
-    - 'move-sherlock-require'
-  args:
-    - gcloud
-    - functions
-    - deploy
-    - sherlock
-    - --region=us-west1
-    - --source=./run-sherlock
-    - --entry-point=endpoint
-    - --memory=1024MB
-    - --timeout=120
-    - --trigger-http
-    - --runtime=python311
-    - --allow-unauthenticated
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - 'us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA'
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'run-sherlock'
+      - '--image'
+      - 'us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA'
+      - '--region'
+      - 'us-west1'
+
+images:
+  - 'us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA'
