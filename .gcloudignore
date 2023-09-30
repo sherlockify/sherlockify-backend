@@ -1,3 +1,6 @@
 .git
 LICENSE
 README.md
+run-sherlock/sherlock
+run-sherlock/.venv
+run-sherlock/__pycache__
