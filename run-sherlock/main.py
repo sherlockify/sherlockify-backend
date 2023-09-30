@@ -2,7 +2,16 @@ import sys
 sys.path.append('sherlock/sherlock')
 import sherlock
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["POST"],
+    allow_headers=["*"],
+)
 
 class SherlockQuery(BaseModel):
     username: str
