@@ -19,8 +19,9 @@ steps:
     id: 'build-docker'
     waitFor: ['move-sherlock-require']
     args:
-      - --destination='us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA'
+      - --destination=us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA
       - --context=./run-sherlock
+      - --dockerfile=./Dockerfile
       - --cache=true
 
   # - name: 'gcr.io/cloud-builders/docker'
