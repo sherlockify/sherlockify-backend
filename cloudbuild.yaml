@@ -15,24 +15,23 @@ steps:
       - |
         cat ./run-sherlock/sherlock/requirements.txt >> ./run-sherlock/requirements.txt
 
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: 'gcr.io/kaniko-project/executor:latest'
     id: 'build-docker'
     waitFor: ['move-sherlock-require']
     args:
-      - build
-      - -t
-      - 'us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA'
-      - ./run-sherlock
+      - --destination='us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA'
+      - --context=./run-sherlock
+      - --cache=true
 
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'push-docker'
-    waitFor: ['build-docker']
-    args:
-      - push
-      - 'us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA'
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   id: 'push-docker'
+  #   waitFor: ['build-docker']
+  #   args:
+  #     - push
+  #     - 'us-west1-docker.pkg.dev/sherlockify/run-sherlock-build/run-sherlock:$COMMIT_SHA'
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    waitFor: ['push-docker']
+    waitFor: ['build-docker']
     entrypoint: gcloud
     args:
       - 'run'
