@@ -27,9 +27,8 @@ steps:
     - --region=us-west1
     - --source=./run-sherlock
     - --entry-point=endpoint
-    - --memory=32768MB
+    - --memory=1024MB
     - --timeout=120
     - --trigger-http
     - --runtime=python311
     - --allow-unauthenticated
-    - --gen2
