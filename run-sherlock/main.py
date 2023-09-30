@@ -2,7 +2,7 @@ import sys
 sys.path.append('sherlock/sherlock')
 import sherlock
 
-def hello_world(request):
+def endpoint(request):
     """Responds to any HTTP request.
     Args:
         request (flask.Request): HTTP request object.

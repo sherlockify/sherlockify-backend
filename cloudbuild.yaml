@@ -26,5 +26,7 @@ steps:
     - sherlock
     - --region=us-west1
     - --source=./run-sherlock
+    - --entry-point=endpoint
     - --trigger-http
     - --runtime=python311
+    - --allow-unauthenticated
