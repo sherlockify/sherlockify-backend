@@ -34,12 +34,18 @@ async def endpoint(item: SherlockQuery):
 @app.get("/stream")
 async def stream(request: Request):
     async def event_generator():
+        item = None
         while True:
             if await request.is_disconnected():
                 break
 
             if not query_notify.queueEmpty():
-                yield str(query_notify.queuePop())
+                item = query_notify.queuePop()
+                yield str(item)
+
+            if item and ("stop" in item):
+                break
+
             await asyncio.sleep(STREAM_DELAY)
     
     return EventSourceResponse(event_generator())
