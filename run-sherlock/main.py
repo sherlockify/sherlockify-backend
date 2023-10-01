@@ -8,6 +8,7 @@ from sse_starlette.sse import EventSourceResponse
 import asyncio
 from _thread import start_new_thread
 from pydantic import BaseModel
+import json
 
 STREAM_DELAY = 0.1
 query_notify = QueryNotifyQueue()
@@ -41,7 +42,7 @@ async def stream(request: Request):
 
             if not query_notify.queueEmpty():
                 item = query_notify.queuePop()
-                yield str(item)
+                yield json.dumps(item)
 
             if item and ("stop" in item):
                 break
