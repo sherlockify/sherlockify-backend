@@ -29,6 +29,7 @@ app.add_middleware(
 
 @app.post("/")
 async def endpoint(item: SherlockQuery):
+    query_notify.clearQueue()
     start_new_thread(sherlock.req_json, (item.username, item.extra, query_notify))
     return item
 
